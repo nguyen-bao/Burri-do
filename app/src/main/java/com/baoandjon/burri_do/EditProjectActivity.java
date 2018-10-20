@@ -30,10 +30,14 @@ public class EditProjectActivity extends AppCompatActivity {
     private LinearLayout layout_tags;
     private Button btn_submit;
 
+    private Database db;
+
     private ArrayList<Tag> availableTags;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        db = Database.getInstance();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_project);
 
@@ -43,9 +47,8 @@ public class EditProjectActivity extends AppCompatActivity {
         layout_tags = findViewById(R.id.layout_tags);
         btn_submit = findViewById(R.id.btn_submit);
 
-        availableTags = new ArrayList<>(); // replace with data retrieval
-
-        for (Tag tag : availableTags) {
+        db.update();
+        for (Tag tag : db.getTags()) {
             CheckBox checkbox = new CheckBox(this);
             checkbox.setBackground(tag.getIcon());
             layout_tags.addView(checkbox);
@@ -79,7 +82,7 @@ public class EditProjectActivity extends AppCompatActivity {
             newProject.setDescription(description);
             newProject.setTags(tags);
 
-            // store project data
+            db.addProject(newProject);
 
             Intent intent = new Intent(this, HomeActivity.class);
             startActivity(intent);

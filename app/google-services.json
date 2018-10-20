@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "634691449387",
+    "firebase_url": "https://burrido-b06cf.firebaseio.com",
+    "project_id": "burrido-b06cf",
+    "storage_bucket": "burrido-b06cf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:634691449387:android:c737ad2eced15c24",
+        "android_client_info": {
+          "package_name": "com.baoandjon.burri_do"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "634691449387-4khbuggt2ebvi8vcr9rm4lkj0erlot8l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.baoandjon.burri_do",
+            "certificate_hash": "973b21f9793b98ac74cf2fad1afb9128ec16c889"
+          }
+        },
+        {
+          "client_id": "634691449387-ucaseau2c9obhgrhv2iq7jhj7d0k9cfp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAskMveSwhubPeziAblUvaTcAJidQ10TJs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "634691449387-ucaseau2c9obhgrhv2iq7jhj7d0k9cfp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
