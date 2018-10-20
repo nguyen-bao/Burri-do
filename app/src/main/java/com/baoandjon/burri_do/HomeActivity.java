@@ -2,8 +2,10 @@ package com.baoandjon.burri_do;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,24 +14,39 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+
+import static android.content.ContentValues.TAG;
 
 public class HomeActivity extends AppCompatActivity {
     private LinearLayout lin_layout;
     private ImageButton btn_new;
-    private ArrayList<Project> projects;
+    private Database db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        db = Database.getInstance();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
         lin_layout = findViewById(R.id.lin_layout);
         btn_new = findViewById(R.id.btn_new);
-        projects = new ArrayList<>(); // replace with data retrieval
 
-        for (Project project : projects) {
-            addProject(project);
+        db.update();
+        for (Project project : db.getProjects()) {
+            addButton(project);
         }
 
         btn_new.setOnClickListener(new View.OnClickListener() {
@@ -42,7 +59,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     // creates new button for project and adds it to layout
-    public void addProject(Project project) {
+    public void addButton(Project project) {
         ImageButton newButton = new ImageButton(this);
         newButton.setLayoutParams(btn_new.getLayoutParams());
         newButton.setImageDrawable(project.getIcon());
