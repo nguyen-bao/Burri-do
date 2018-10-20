@@ -1,10 +1,12 @@
 package com.baoandjon.burri_do;
 
+import android.graphics.drawable.Drawable;
+
 public class Tag {
     private String name;
-    private String icon;
+    private Drawable icon;
 
-    public Tag(String name, String icon) {
+    public Tag(String name, Drawable icon) {
         this.name = name;
         this.icon = icon;
     }
@@ -17,11 +19,11 @@ public class Tag {
         this.name = name;
     }
 
-    public String getIcon() {
+    public Drawable getIcon() {
         return icon;
     }
 
-    public void setIcon(String icon) {
+    public void setIcon(Drawable icon) {
         this.icon = icon;
     }
 }

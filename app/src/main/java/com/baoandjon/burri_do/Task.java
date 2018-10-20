@@ -1,5 +1,8 @@
 package com.baoandjon.burri_do;
 
+import android.graphics.drawable.Drawable;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 
@@ -7,10 +10,10 @@ public abstract class Task {
     private String title;
     private String description;
     private Date deadline;
-    private HashSet<Tag> tags;
-    private Sprite icon;
+    private ArrayList<Tag> tags;
+    private Drawable icon;
 
-    public Task(String title, Sprite icon) {
+    public Task(String title, Drawable icon) {
         this.title = title;
         this.icon = icon;
     }
@@ -39,19 +42,19 @@ public abstract class Task {
         this.deadline = deadline;
     }
 
-    public HashSet<Tag> getTags() {
+    public ArrayList<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(HashSet<Tag> tags) {
+    public void setTags(ArrayList<Tag> tags) {
         this.tags = tags;
     }
 
-    public Sprite getIcon() {
+    public Drawable getIcon() {
         return icon;
     }
 
-    public void setIcon(Sprite icon) {
+    public void setIcon(Drawable icon) {
         this.icon = icon;
     }
 }
