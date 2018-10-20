@@ -8,6 +8,7 @@
     android:orientation="vertical">
 
     <!--Show ingredient/subtask information. Last line should fetch task's image-->
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="150dp"
@@ -17,7 +18,7 @@
         android:adjustViewBounds="false"
         android:contentDescription="@string/task_image"
 
-        app:srcCompat="@drawable/burrito_clipart_emoji" />
+        app:srcCompat="@drawable/testo" />
 
     <LinearLayout
         android:layout_width="match_parent"
