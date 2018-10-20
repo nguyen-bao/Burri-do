@@ -1,21 +1,18 @@
 package com.baoandjon.burri_do;
 
-import android.graphics.drawable.Drawable;
-
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 
 public abstract class Task {
     private String title;
     private String description;
     private Date deadline;
     private ArrayList<Tag> tags;
-    private Drawable icon;
+    private int iconRef;
 
-    public Task(String title, Drawable icon) {
+    public Task(String title, int iconRef) {
         this.title = title;
-        this.icon = icon;
+        this.iconRef = iconRef;
     }
 
     public String getTitle() {
@@ -50,11 +47,11 @@ public abstract class Task {
         this.tags = tags;
     }
 
-    public Drawable getIcon() {
-        return icon;
+    public int getIconRef() {
+        return iconRef;
     }
 
-    public void setIcon(Drawable icon) {
-        this.icon = icon;
+    public void setIconRef(int iconRef) {
+        this.iconRef = iconRef;
     }
 }

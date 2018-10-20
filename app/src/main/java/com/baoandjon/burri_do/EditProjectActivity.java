@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.graphics.drawable.PictureDrawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -48,9 +49,26 @@ public class EditProjectActivity extends AppCompatActivity {
         btn_submit = findViewById(R.id.btn_submit);
 
         db.update();
+
+        db.updateTags(new Database.OnGetDataListener() {
+            @Override
+            public void onSuccess() {
+                for (Tag tag : db.getTags()) {
+                    CheckBox checkbox = new CheckBox(EditProjectActivity.this);
+                    checkbox.setBackground(ContextCompat.getDrawable(EditProjectActivity.this, tag.getIconRef()));
+                    layout_tags.addView(checkbox);
+                }
+            }
+
+            @Override
+            public void onFailure() {
+
+            }
+        });
+
         for (Tag tag : db.getTags()) {
             CheckBox checkbox = new CheckBox(this);
-            checkbox.setBackground(tag.getIcon());
+            checkbox.setBackground(ContextCompat.getDrawable(this, tag.getIconRef()));
             layout_tags.addView(checkbox);
         }
 
@@ -77,7 +95,7 @@ public class EditProjectActivity extends AppCompatActivity {
                 }
             }
 
-            Project newProject = new Project(title, new ColorDrawable(23));
+            Project newProject = new Project(title, R.drawable.tortilla);
             newProject.setDeadline(deadline);
             newProject.setDescription(description);
             newProject.setTags(tags);

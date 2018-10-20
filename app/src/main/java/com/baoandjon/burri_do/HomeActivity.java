@@ -3,6 +3,7 @@ package com.baoandjon.burri_do;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -45,6 +46,20 @@ public class HomeActivity extends AppCompatActivity {
         btn_new = findViewById(R.id.btn_new);
 
         db.update();
+        db.updateProjects(new Database.OnGetDataListener() {
+            @Override
+            public void onSuccess() {
+                for (Project project : db.getProjects()) {
+                    addButton(project);
+                }
+            }
+
+            @Override
+            public void onFailure() {
+
+            }
+        });
+
         for (Project project : db.getProjects()) {
             addButton(project);
         }
@@ -62,10 +77,10 @@ public class HomeActivity extends AppCompatActivity {
     public void addButton(Project project) {
         ImageButton newButton = new ImageButton(this);
         newButton.setLayoutParams(btn_new.getLayoutParams());
-        newButton.setImageDrawable(project.getIcon());
+        newButton.setImageDrawable(ContextCompat.getDrawable(this, project.getIconRef()));
         newButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
-        Drawable transBackground = project.getIcon();
+        Drawable transBackground = ContextCompat.getDrawable(this, project.getIconRef());
         transBackground.setAlpha(0);
         newButton.setBackground(transBackground);
 

@@ -1,12 +1,12 @@
 package com.baoandjon.burri_do;
 
-import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -14,109 +14,153 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import static android.content.ContentValues.TAG;
 
 public class Database {
     private static final Database instance = new Database();
-    private static FirebaseFirestore db;
-    private static ArrayList<Project> projects;
-    private static ArrayList<Tag> tags;
+
+    private FirebaseFirestore db;
+    private ArrayList<Project> projects;
+    private ArrayList<Tag> availableTags;
 
     public static Database getInstance() {
         return instance;
     }
 
-    public static void update() {
+    public void update() {
         db = FirebaseFirestore.getInstance();
     }
 
+    public ArrayList<Project> getProjects() {
+        return projects;
+    }
+
+    // listener for getData
+    public interface OnGetDataListener {
+        void onSuccess();
+        void onFailure();
+    }
+
     // creates project arraylist from database
-    private static void updateProjects() {
+    public void updateProjects(final OnGetDataListener listener) {
         projects = new ArrayList<>();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        final ArrayList<Project> projects_final;
 
         Task<QuerySnapshot> snapshot = db.collection("projects").get();
         snapshot.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot snapshot) {
                 Log.d(TAG, "DocumentSnapshot data: " + snapshot.getDocuments());
-                for (DocumentSnapshot doc : snapshot.getDocuments()) {
-                    String title = doc.getString("title");
-                    Drawable icon = (Drawable)doc.get("icon");
-                    String description = doc.getString("description");
-                    Date deadline = doc.getDate("deadline");
-                    ArrayList<Tag> tags = new ArrayList((Collection<Tag>)doc.get("tags"));
-                    ArrayList<Ingredient> ingredients = new ArrayList((Collection<Ingredient>)doc.get("ingredients"));
-
-                    Project project = new Project(title, icon);
-                    project.setDescription(description);
-                    project.setDeadline(deadline);
-                    project.setTags(tags);
-                    project.setIngredients(ingredients);
-
-                    projects.add(project);
-                }
+                extractProjects(snapshot.getDocuments());
+                listener.onSuccess();
             }
         });
         snapshot.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d(TAG, "get failed with " + e.getMessage());
+                listener.onFailure();
             }
         });
     }
 
-    public static ArrayList<Project> getProjects() {
-        updateProjects();
-        return projects;
+    private void extractProjects(List<DocumentSnapshot> documents) {
+        for (DocumentSnapshot doc : documents) {
+            String title = doc.getString("title");
+            int iconRef = ((Long)doc.get("icon_ref")).intValue();
+            String description = doc.getString("description");
+            Date deadline = doc.getDate("deadline");
+
+            ArrayList<Tag> tags = (ArrayList<Tag>)doc.get("tags");
+            ArrayList<Ingredient> ingredients = (ArrayList<Ingredient>)doc.get("ingredients");
+
+            Project project = new Project(title, iconRef);
+            project.setDescription(description);
+            project.setDeadline(deadline);
+            project.setTags(tags);
+            project.setIngredients(ingredients);
+
+            projects.add(project);
+        }
+        System.out.println("EXTRACT:" + projects.size());
     }
 
-    public static void addProject(Project project) {
-        db.collection("projects").add(project);
+    public void addProject(Project project) {
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("title", project.getTitle());
+        data.put("icon_ref", project.getIconRef());
+        data.put("deadline", project.getDeadline());
+        data.put("description", project.getDescription());
+        data.put("tags", project.getTags());
+
+        db.collection("projects").add(data)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(TAG, "Document added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error adding document");
+                    }
+                });
     }
 
-    public static void removeProject() {
+    public void removeProject(String title) {
 
+    }
+
+    public ArrayList<Tag> getTags() {
+        return availableTags;
     }
 
     // creates tag arraylist from database
-    private static void updateTags() {
-        tags = new ArrayList<>();
+    public void updateTags(final OnGetDataListener listener) {
+        availableTags = new ArrayList<>();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        final ArrayList<Project> projects_final;
-
-        Task<QuerySnapshot> snapshot = db.collection("tags").get();
+        Task<QuerySnapshot> snapshot = db.collection("available_tags").get();
         snapshot.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot snapshot) {
                 Log.d(TAG, "DocumentSnapshot data: " + snapshot.getDocuments());
-                for (DocumentSnapshot doc : snapshot.getDocuments()) {
-                    String name = doc.getString("name");
-                    Drawable icon = (Drawable)doc.get("icon");
-
-                    Tag tag = new Tag(name, icon);
-
-                    tags.add(tag);
-                }
+                extractTags(snapshot.getDocuments());
+                listener.onSuccess();
             }
         });
         snapshot.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d(TAG, "get failed with " + e.getMessage());
+                listener.onFailure();
             }
         });
     }
 
-    public static ArrayList<Tag> getTags() {
-        updateTags();
-        return tags;
+    private void extractTags(List<DocumentSnapshot> documents) {
+        for (DocumentSnapshot doc : documents) {
+            String name = doc.getString("name");
+            int iconRef = (int)doc.get("icon_ref");
+
+            Tag tag = new Tag(name, iconRef);
+
+            availableTags.add(tag);
+        }
+    }
+
+    public void addTag(Tag tag) {
+        db.collection("available_tags").add(tag);
+    }
+
+    public void removeTag(String name) {
+
     }
 
     private Database() {
